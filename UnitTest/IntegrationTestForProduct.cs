@@ -63,6 +63,7 @@ namespace UnitTest
 		[Fact]
 		public void Retrieve_WithVAlidEntityID_ReturnsAValidEntity()
 		{
+
 			var connectionBuilder = new SqliteConnectionStringBuilder()
 			{
 				DataSource = ":memory:"
@@ -74,8 +75,11 @@ namespace UnitTest
 					.Options;
 			//Arrange
 			Product product;
+
 			using (var context = new ECommerceDbContext(options))
 			{
+				context.Database.OpenConnection();
+				context.Database.EnsureCreated();
 				var category = new Category
 				{
 					Name = "Bag",
@@ -122,6 +126,8 @@ namespace UnitTest
 					.Options;
 			using (var context = new ECommerceDbContext(options))
 			{
+				context.Database.OpenConnection();
+				context.Database.EnsureCreated();
 				//Arrange
 				var sut = new ProductRepository(context);
 				//Act
