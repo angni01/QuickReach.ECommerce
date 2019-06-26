@@ -12,7 +12,7 @@ namespace QuickReach.ECommerce.API.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class CategoriesController : ControllerBase
+	public class CategoriesController: ControllerBase
 	{
 		private readonly ICategoryRepository repository;
 		public CategoriesController(ICategoryRepository repository)
@@ -57,6 +57,12 @@ namespace QuickReach.ECommerce.API.Controllers
 			if (!ModelState.IsValid)
 			{
 				return BadRequest();
+			}
+
+			var entity = this.repository.Retrieve(id);
+			if (entity == null)
+			{
+				return NotFound();
 			}
 
 			this.repository.Update(id, category);

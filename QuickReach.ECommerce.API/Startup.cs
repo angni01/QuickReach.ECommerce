@@ -31,8 +31,10 @@ namespace QuickReach.ECommerce.API
 		{
 			services.AddDbContext<ECommerceDbContext>();
 			services.AddTransient<ICategoryRepository, CategoryRepository>();
-			services.AddTransient<IRepository<Product>, ProductRepository>();
-			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+			services.AddTransient<IProductRepository, ProductRepository>();
+			services.AddTransient<ISupplierRepository, SupplierRepository>();
+			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+				.AddJsonOptions(opts => opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore );
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

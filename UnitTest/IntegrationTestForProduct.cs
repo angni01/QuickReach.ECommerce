@@ -37,6 +37,7 @@ namespace UnitTest
 					Description = "Bag Department"
 				};
 				context.Categories.Add(category);
+				context.SaveChanges();
 				product = new Product
 				{
 					Name = "Sling Bag",
@@ -46,19 +47,55 @@ namespace UnitTest
 					ImageUrl = "slingbag.jpg"
 				};
 				
-				var sut = new ProductRepository(context);
 				
-				//Act
-				sut.Create(product);
 			}
 			using (var context = new ECommerceDbContext(options))
 			{
+				var sut = new ProductRepository(context);
+
+				//Act
+				sut.Create(product);
 				Assert.True(product.ID != 0);
 				var actual = context.Products.Find(product.ID);
 				//Assert
 				Assert.NotNull(actual);
 			}
 				
+		}
+		[Fact]
+		public void Create_WithNotExistingCategoryID_ShouldThrowException()
+		{
+			var connectionBuilder = new SqliteConnectionStringBuilder()
+			{
+				DataSource = ":memory:"
+			};
+			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
+
+			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
+					.UseSqlite(connection)
+					.Options;
+			//Arrange
+
+			Product product;
+			using (var context = new ECommerceDbContext(options))
+			{
+				context.Database.OpenConnection();
+				context.Database.EnsureCreated();
+				product = new Product
+				{
+					Name = "Sling Bag",
+					Description = "This is a Sling Bag",
+					Price = 199,
+					CategoryID = 100,
+					ImageUrl = "slingbag.jpg"
+				};
+
+				var sut = new ProductRepository(context);
+				
+				//Act &Assert
+				Assert.Throws<SystemException>(() => sut.Create(product));
+			}
+
 		}
 		[Fact]
 		public void Retrieve_WithVAlidEntityID_ReturnsAValidEntity()
@@ -86,7 +123,7 @@ namespace UnitTest
 					Description = "Bag Department"
 				};
 				var categoryRepo = new CategoryRepository(context);
-				categoryRepo.Create(category);
+				context.Categories.Add(category);
 				product = new Product
 				{
 					Name = "Sling Bag",
@@ -95,8 +132,8 @@ namespace UnitTest
 					CategoryID = category.ID,
 					ImageUrl = "slingbag.jpg"
 				};
-				var productrepo = new ProductRepository(context);
-				productrepo.Create(product);
+				context.Products.Add(product);
+				context.SaveChanges();
 			}
 
 			using (var context = new ECommerceDbContext(options))

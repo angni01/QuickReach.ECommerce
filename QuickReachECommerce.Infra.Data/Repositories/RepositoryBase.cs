@@ -4,11 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using QuickReach.ECommerce.Domain.Models;
 
 namespace QuickReach.ECommerce.Infra.Data.Repositories
 {
 	public abstract class RepositoryBase<TEntity>
-		: IRepository<TEntity> where TEntity : class
+		: IRepository<TEntity> where TEntity : EntityBase
 	{
 		protected readonly ECommerceDbContext context;
 		public RepositoryBase(ECommerceDbContext context)
@@ -16,23 +18,26 @@ namespace QuickReach.ECommerce.Infra.Data.Repositories
 			this.context = context;
 		}
 
-		public TEntity Create(TEntity newEntity)
+		public virtual TEntity Create(TEntity newEntity)
 		{
 			this.context.Set<TEntity>().Add(newEntity);
 			this.context.SaveChanges();
 			return newEntity;
 		}
 
-		public void Delete(int entityId)
+		public virtual void Delete(int entityId)
 		{
 			var entityToRemove = Retrieve(entityId);
 			this.context.Remove<TEntity>(entityToRemove);
 			this.context.SaveChanges();
 		}
 
-		public TEntity Retrieve(int entityId)
+		public virtual TEntity Retrieve(int entityId)
 		{
-			var entity = this.context.Find<TEntity>(entityId);
+			var entity = this.context
+				.Set<TEntity>()
+				.AsNoTracking()
+				.FirstOrDefault(c => c.ID == entityId);
 			return entity;
 		}
 

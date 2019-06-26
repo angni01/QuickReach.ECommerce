@@ -199,6 +199,30 @@ namespace UnitTest
 				Assert.Null(actual);
 			}
 		}
+
+
+		[Fact]
+		public void Delete_WithExistingProduct_ShouldThrowAnException()
+		{
+			var connectionBuilder = new SqliteConnectionStringBuilder()
+			{
+				DataSource = ":memory:"
+			};
+			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
+			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
+					.UseSqlite(connection)
+					.Options;
+			//Arrange
+
+			using (var context = new ECommerceDbContext(options))
+			{
+				context.Database.OpenConnection();
+				context.Database.EnsureCreated();
+				var sut = new CategoryRepository(context);
+				//Act &Assert
+				Assert.Throws<SystemException>(() => sut.Delete(52));
+			}
+		}
 		[Fact]
 		public void Update_WithValidEntity_ShouldUpdateDatabaseRecord()
 		{

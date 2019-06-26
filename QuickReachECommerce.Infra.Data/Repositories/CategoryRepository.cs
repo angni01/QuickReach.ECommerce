@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace QuickReach.ECommerce.Infra.Data.Repositories
 {
@@ -28,6 +29,28 @@ namespace QuickReach.ECommerce.Infra.Data.Repositories
 				.Take(count)
 				.ToList();
 			return result;
+		}
+
+		public override Category Retrieve(int entityId)
+		{
+			var entity = this.context.Categories
+				.AsNoTracking()
+				.Include(c => c.Products)
+				.Where(c => c.ID == entityId)
+				.FirstOrDefault();
+			return entity;
+		}
+
+		public override void Delete(int entityId)
+		{
+			var products = this.context.Products.Where(c => c.CategoryID == entityId);
+			if (products != null)
+			{
+				throw new SystemException("Cannot Delete Record");
+			}
+			var category = this.context.Set<Category>().Find(entityId);
+			this.context.Set<Category>().Remove(category);
+			this.context.SaveChanges();
 		}
 	}
 }
