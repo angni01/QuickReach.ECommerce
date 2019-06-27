@@ -7,6 +7,7 @@ using System.Linq;
 using Xunit;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using UnitTest.Utilities;
 
 namespace UnitTest
 {
@@ -15,15 +16,8 @@ namespace UnitTest
 		[Fact]
 		public void Create_WithValidEntity_ShouldCreateDatabaseRecord()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
 
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			var category = new Category
 			{
 				Name = "Bag",
@@ -52,17 +46,9 @@ namespace UnitTest
 		[Fact]
 		public void Retrieve_WithVAlidEntityID_ReturnsAValidEntity()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			//Arrange
-			
+
 			var category = new Category
 			{
 				Name = "Shoes",
@@ -93,14 +79,7 @@ namespace UnitTest
 		[Fact]
 		public void Retrieve_WithNonexistingEntityID_ReturnsNull()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 
 			using (var context = new ECommerceDbContext(options))
 			{
@@ -121,14 +100,7 @@ namespace UnitTest
 
 		public void Retrieve_WithSkipAndCount_ReturnsTheCorrectPage()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			using (var context = new ECommerceDbContext(options))
 			{
 				context.Database.OpenConnection();
@@ -169,14 +141,7 @@ namespace UnitTest
 		[Fact]
 		public void Delete_WithValidEntityID_ShouldRemoveRecordFromDatabase()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			//Arrange
 			var category = new Category
 			{
@@ -204,36 +169,44 @@ namespace UnitTest
 		[Fact]
 		public void Delete_WithExistingProduct_ShouldThrowAnException()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			//Arrange
-
+			//Arrange
+			var category = new Category
+			{
+				Name = "Bag",
+				Description = "Bag Department"
+			};
+			Product product;
 			using (var context = new ECommerceDbContext(options))
 			{
 				context.Database.OpenConnection();
 				context.Database.EnsureCreated();
 				var sut = new CategoryRepository(context);
+				context.Categories.Add(category);
+				
+				product = new Product
+				{
+					Name = "Sling Bag",
+					Description = "This is a Sling Bag",
+					Price = 199,
+					CategoryID = category.ID,
+					ImageUrl = "slingbag.jpg"
+				};
+				context.Products.Add(product);
+				context.SaveChanges();
+			}
+			using (var context = new ECommerceDbContext(options))
+			{
+				var sut = new CategoryRepository(context);
 				//Act &Assert
-				Assert.Throws<SystemException>(() => sut.Delete(52));
+				Assert.Throws<DbUpdateException>(() => sut.Delete(product.ID));
 			}
 		}
 		[Fact]
 		public void Update_WithValidEntity_ShouldUpdateDatabaseRecord()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			var oldCategory = new Category
 			{
 				Name = "shoes",

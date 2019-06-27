@@ -7,6 +7,7 @@ using System.Linq;
 using Xunit;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using UnitTest.Utilities;
 
 namespace UnitTest
 {
@@ -15,15 +16,7 @@ namespace UnitTest
 		[Fact]
 		public void Create_WithValidEntity_ShouldCreateDatabaseRecord()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			//Arrange
 
 			Product product;
@@ -65,15 +58,7 @@ namespace UnitTest
 		[Fact]
 		public void Create_WithNotExistingCategoryID_ShouldThrowException()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			//Arrange
 
 			Product product;
@@ -93,7 +78,7 @@ namespace UnitTest
 				var sut = new ProductRepository(context);
 				
 				//Act &Assert
-				Assert.Throws<SystemException>(() => sut.Create(product));
+				Assert.Throws<DbUpdateException>(() => sut.Create(product));
 			}
 
 		}
@@ -101,15 +86,7 @@ namespace UnitTest
 		public void Retrieve_WithVAlidEntityID_ReturnsAValidEntity()
 		{
 
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			//Arrange
 			Product product;
 
@@ -152,15 +129,7 @@ namespace UnitTest
 		[Fact]
 		public void Retrieve_WithNonexistingEntityID_ReturnsNull()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			using (var context = new ECommerceDbContext(options))
 			{
 				context.Database.OpenConnection();
@@ -177,15 +146,7 @@ namespace UnitTest
 		[Fact]
 		public void Retrieve_WithSkipAndCount_ReturnsTheCorrectPage()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			using (var context = new ECommerceDbContext(options))
 			{
 				context.Database.OpenConnection();
@@ -234,14 +195,7 @@ namespace UnitTest
 		[Fact]
 		public void Delete_WithValidEntityID_ShouldRemoveRecordFromDatabase()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			Product product;
 			using (var context = new ECommerceDbContext(options))
 			{
@@ -280,14 +234,7 @@ namespace UnitTest
 		[Fact]
 		public void Update_WithValidEntity_ShouldUpdateDatabaseRecord()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			//Arrange
 			Product oldProduct;
 			using (var context = new ECommerceDbContext(options))

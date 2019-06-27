@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.InMemory.Storage.Internal;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Extensions;
+using UnitTest.Utilities;
 
 namespace UnitTest
 {
@@ -17,16 +18,8 @@ namespace UnitTest
 		[Fact]
 		public void Create_WithValidEntity_ShouldCreateDatabaseRecord()
 		{
-			
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
 
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			// Arrange
 			var supplier = new Supplier
 			{
@@ -57,16 +50,8 @@ namespace UnitTest
 		[Fact]
 		public void Retrieve_WithVAlidEntityID_ReturnsAValidEntity()
 		{
-			
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
 
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			// Arrange
 			var supplier = new Supplier
 			{
@@ -98,14 +83,7 @@ namespace UnitTest
 		[Fact]
 		public void Retrieve_WithNonexistingEntityID_ReturnsNull()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 
 			using (var context = new ECommerceDbContext(options))
 			{
@@ -124,14 +102,7 @@ namespace UnitTest
 		[Fact]
 		public void Retrieve_WithSkipAndCount_ReturnsTheCorrectPage()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			using (var context = new ECommerceDbContext(options))
 			{
 				context.Database.OpenConnection();
@@ -173,14 +144,7 @@ namespace UnitTest
 		[Fact]
 		public void Delete_WithValidEntityID_ShouldRemoveRecordFromDatabase()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			//Arrange
 			var supplier = new Supplier
 			{
@@ -207,14 +171,7 @@ namespace UnitTest
 		[Fact]
 		public void Update_WithValidEntity_ShouldUpdateDatabaseRecord()
 		{
-			var connectionBuilder = new SqliteConnectionStringBuilder()
-			{
-				DataSource = ":memory:"
-			};
-			var connection = new SqliteConnection(connectionBuilder.ConnectionString);
-			var options = new DbContextOptionsBuilder<ECommerceDbContext>()
-					.UseSqlite(connection)
-					.Options;
+			var options = ConnectionOptionHelper.Sqlite();
 			var oldSupplier = new Supplier
 			{
 				Name = "Shirt Supplier",

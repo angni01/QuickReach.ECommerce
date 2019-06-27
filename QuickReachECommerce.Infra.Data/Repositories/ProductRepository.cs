@@ -19,18 +19,18 @@ namespace QuickReach.ECommerce.Infra.Data.Repositories
 
 		}
 
-		public override Product Create(Product product)
-		{
-			var category = this.context.Categories.Find(product.ID);
-			if (category == null)
-			{
-				throw new SystemException("Record does not Exist!");
-			}
+		//public override Product Create(Product product)
+		//{
+		//	var category = this.context.Categories.Find(product.ID);
+		//	if (category == null)
+		//	{
+		//		throw new SystemException("Record does not Exist!");
+		//	}
 
-			this.context.Set<Product>().Add(product);
-			this.context.SaveChanges();
-			return product;
-		}
+		//	this.context.Set<Product>().Add(product);
+		//	this.context.SaveChanges();
+		//	return product;
+		//}
 
 		public IEnumerable<Product> Retrieve(string search = "", int skip = 0, int count = 0)
 		{
