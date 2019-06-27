@@ -190,7 +190,7 @@ namespace UnitTest
 					Name = "Sling Bag",
 					Description = "This is a Sling Bag",
 					Price = 199,
-					CategoryID = category.ID,
+					//CategoryID = category.ID,
 					ImageUrl = "slingbag.jpg"
 				};
 				context.Products.Add(product);

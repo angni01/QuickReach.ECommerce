@@ -20,7 +20,8 @@ namespace QuickReach.ECommerce.Infra.Data.Repositories
 
 		public virtual TEntity Create(TEntity newEntity)
 		{
-			this.context.Set<TEntity>().Add(newEntity);
+			this.context.Set<TEntity>()
+						.Add(newEntity);
 			this.context.SaveChanges();
 			return newEntity;
 		}
@@ -44,17 +45,19 @@ namespace QuickReach.ECommerce.Infra.Data.Repositories
 		public IEnumerable<TEntity> Retrieve(int skip = 0, int count = 1)
 		{
 			var result = this.context.Set<TEntity>()
-				.Skip(skip)
-				.Take(count)
-				.ToList();
+					.AsNoTracking()
+					.Skip(skip)
+					.Take(count)
+					.ToList();
 			return result;
 		}
-
 		public TEntity Update(int entityId, TEntity entity)
 		{
-			this.context.Update<TEntity>(entity);
+			var entry = this.context.Update<TEntity>(entity);
+
 			this.context.SaveChanges();
-			return entity;
+
+			return entry.Entity;
 		}
 	}
 }

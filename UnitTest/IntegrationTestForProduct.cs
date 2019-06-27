@@ -36,7 +36,7 @@ namespace UnitTest
 					Name = "Sling Bag",
 					Description = "This is a Sling Bag",
 					Price = 199,
-					CategoryID = category.ID,
+					//CategoryID = category.ID,
 					ImageUrl = "slingbag.jpg"
 				};
 				
@@ -71,7 +71,7 @@ namespace UnitTest
 					Name = "Sling Bag",
 					Description = "This is a Sling Bag",
 					Price = 199,
-					CategoryID = 100,
+					//CategoryID = 100,
 					ImageUrl = "slingbag.jpg"
 				};
 
@@ -106,7 +106,7 @@ namespace UnitTest
 					Name = "Sling Bag",
 					Description = "This is a Sling Bag",
 					Price = 199,
-					CategoryID = category.ID,
+					//CategoryID = category.ID,
 					ImageUrl = "slingbag.jpg"
 				};
 				context.Products.Add(product);
@@ -123,7 +123,7 @@ namespace UnitTest
 				Assert.Equal(retrievedProduct.Name, product.Name);
 				Assert.Equal(retrievedProduct.Description, product.Description);
 				Assert.Equal(retrievedProduct.Price, product.Price);
-				Assert.Equal(retrievedProduct.CategoryID, product.CategoryID);
+				//Assert.Equal(retrievedProduct.CategoryID, product.CategoryID);
 			}
 		}
 		[Fact]
@@ -165,7 +165,7 @@ namespace UnitTest
 						Name = string.Format("Product {0}", i),
 						Description = string.Format("Description {0}", i),
 						Price = i,
-						CategoryID = category.ID,
+						//CategoryID = category.ID,
 						ImageUrl = string.Format("image{0}.jpg", i)
 					});
 				}
@@ -213,7 +213,7 @@ namespace UnitTest
 					Name = "Sling Bag",
 					Description = "This is a Sling Bag",
 					Price = 199,
-					CategoryID = category.ID,
+					//CategoryID = category.ID,
 					ImageUrl = "slingbag.jpg"
 				};
 				context.Products.Add(product);
@@ -253,7 +253,7 @@ namespace UnitTest
 					Name = "Sling Bag",
 					Description = "This is a Sling Bag",
 					Price = 199,
-					CategoryID = category.ID,
+					//CategoryID = category.ID,
 					ImageUrl = "slingbag.jpg"
 				};
 				context.Products.Add(oldProduct);

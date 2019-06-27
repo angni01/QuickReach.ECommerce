@@ -12,9 +12,11 @@ namespace QuickReach.ECommerce.Infra.Data.EntityConfiguration
 	{
 		public void Configure(EntityTypeBuilder<Category> builder)
 		{
+			builder.ToTable("Category");
+
 			builder.Property(c => c.ID)
-				.IsRequired()
-				.ValueGeneratedOnAdd();
+				   .IsRequired()
+				   .ValueGeneratedOnAdd();
 
 		}
 	}
