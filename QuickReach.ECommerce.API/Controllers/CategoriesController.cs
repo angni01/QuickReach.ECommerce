@@ -15,9 +15,13 @@ namespace QuickReach.ECommerce.API.Controllers
 	public class CategoriesController: ControllerBase
 	{
 		private readonly ICategoryRepository repository;
-		public CategoriesController(ICategoryRepository repository)
+		private readonly IProductRepository productrepository;
+		//private readonly IProductCategory productCategoryRepo;
+		public CategoriesController(ICategoryRepository repository, IProductRepository productrepository)
 		{ 
 			this.repository = repository;
+			this.productrepository = productrepository;
+
 		}
 		// GET api/categories
 		[HttpGet]
@@ -49,7 +53,25 @@ namespace QuickReach.ECommerce.API.Controllers
 
 			return CreatedAtAction(nameof(this.Get), category);
 		}
+		// POST api/categories/id
+		[HttpPost("{categoryId}/products")]
+		public IActionResult PostCategoryProduct(int categoryId, [FromBody] ProductCategory entity)
+		{
+			var category = this.repository.Retrieve(categoryId);
+			var product = productrepository.Retrieve(entity.ProductID);
+			if (category == null)
+			{
+				return NotFound();
+			}
+			if (product == null)
+			{
+				return NotFound();
+			}
 
+			category.AddProduct(entity);
+			repository.Update(categoryId, category);
+			return Ok(category);
+		}
 		// PUT api/categories/5
 		[HttpPut("{id}")]
 		public IActionResult Put(int id, [FromBody] Category category)
@@ -58,6 +80,7 @@ namespace QuickReach.ECommerce.API.Controllers
 			{
 				return BadRequest();
 			}
+			
 
 			var entity = this.repository.Retrieve(id);
 			if (entity == null)
@@ -75,6 +98,27 @@ namespace QuickReach.ECommerce.API.Controllers
 		public IActionResult Delete(int id)
 		{
 			this.repository.Delete(id);
+			return Ok();
+		}
+
+		[HttpPut("{id}/products/{productId}")]
+		public IActionResult DeleteCategoryProduct(int id, int productId)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest();
+			}
+			var category = repository.Retrieve(id);
+			if (category == null)
+			{
+				return NotFound();
+			}
+			if (productrepository.Retrieve(productId) == null)
+			{
+				return NotFound();
+			}
+			category.RemoveProduct(productId);
+			repository.Update(id, category);
 			return Ok();
 		}
 	}
