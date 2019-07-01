@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using QuickReach.ECommerce.API.ViewModel;
 using QuickReach.ECommerce.Domain;
 using QuickReach.ECommerce.Domain.Models;
 
@@ -15,6 +18,7 @@ namespace QuickReach.ECommerce.API.Controllers
 	public class SuppliersController : Controller
 	{
 		private readonly ISupplierRepository repository;
+		private readonly IProductRepository productrepository;
 		public SuppliersController(ISupplierRepository repository)
 		{
 			this.repository = repository;
@@ -76,6 +80,49 @@ namespace QuickReach.ECommerce.API.Controllers
 		{
 			this.repository.Delete(id);
 			return Ok();
+		}
+
+		// POST api/products/id
+		[HttpPost("{supplierId}/products")]
+		public IActionResult PostSupplierProduct(int supplierId, [FromBody] ProductSupplier entity)
+		{
+			var category = this.repository.Retrieve(supplierId);
+			var product = productrepository.Retrieve(entity.ProductID);
+			if (category == null)
+			{
+				return NotFound();
+			}
+			if (product == null)
+			{
+				return NotFound();
+			}
+
+			category.AddProduct(entity.ProductID);
+			repository.Update(supplierId, category);
+			return Ok(category);
+		}
+
+		[HttpGet("{id}/products")]
+		public IActionResult GetProductBySupplier(int id)
+		{
+			var connectionString = "Server=.;Database=QuickReachDb;Integrated Security=true;";
+			var connection = new SqlConnection(connectionString);
+			var query =
+				@"SELECT pc.ProductID,
+							pc.CategoryID,
+							p.Name,
+							p.Description,
+							p.Price,
+							p.ImageUrl FROM
+							Product p INNER JOIN
+							ProductSupplier pc ON p.ID = pc.ProductID
+							WHERE pc.SupplierID = @supplierid";
+			var suppliers = connection
+				.Query<SearchItemViewModel>(
+				query, new { supplierid = id })
+				.ToList();
+
+			return Ok(suppliers);
 		}
 	}
 }

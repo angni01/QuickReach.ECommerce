@@ -50,9 +50,14 @@ namespace QuickReach.ECommerce.Domain.Models
 			};
 			((ICollection<CategoryRollup>)this.ChildCategories).Add(child);
 		}
-		public void AddProduct(ProductCategory child)
+		public void AddProduct(int productId)
 		{
-			((ICollection<ProductCategory>)this.ProductCategories).Add(child);
+			var productCategory = new ProductCategory
+			{
+				CategoryID = this.ID,
+				ProductID = productId
+			};
+			((ICollection<ProductCategory>)this.ProductCategories).Add(productCategory);
 		}
 		public ProductCategory GetProduct(int productId)
 		{

@@ -35,6 +35,7 @@ namespace QuickReachECommerce.Infra.Data
 			modelBuilder.ApplyConfiguration(new SupplierEntityTypeConfiguration());
 			modelBuilder.ApplyConfiguration(new CategoryRollupEntityTypeConfiguration());
 			modelBuilder.ApplyConfiguration(new ProductCategoryEntityTypeConfiguration());
+			modelBuilder.ApplyConfiguration(new ProductSupplierEntityTypeConfiguration());
 
 			foreach (var relationship in modelBuilder.Model.GetEntityTypes()
 				.Where(e => !e.IsOwned())
@@ -43,7 +44,7 @@ namespace QuickReachECommerce.Infra.Data
 				relationship.DeleteBehavior = DeleteBehavior.Restrict;
 			}
 		}
-
+		
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Product> Products { get; set; }
 		public DbSet<Supplier> Suppliers { get; set; }

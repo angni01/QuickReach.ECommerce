@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using QuickReach.ECommerce.API.ViewModel;
 using QuickReach.ECommerce.Domain;
 using QuickReach.ECommerce.Domain.Models;
 using QuickReach.ECommerce.Infra.Data.Repositories;
 using QuickReachECommerce.Infra.Data;
+using Dapper;
 
 namespace QuickReach.ECommerce.API.Controllers
 {
@@ -16,12 +20,13 @@ namespace QuickReach.ECommerce.API.Controllers
 	{
 		private readonly ICategoryRepository repository;
 		private readonly IProductRepository productrepository;
-		//private readonly IProductCategory productCategoryRepo;
-		public CategoriesController(ICategoryRepository repository, IProductRepository productrepository)
+		private readonly ECommerceDbContext context;
+		public CategoriesController(ICategoryRepository repository, IProductRepository productrepository
+			,ECommerceDbContext context)
 		{ 
 			this.repository = repository;
 			this.productrepository = productrepository;
-
+			this.context = context;
 		}
 		// GET api/categories
 		[HttpGet]
@@ -68,7 +73,7 @@ namespace QuickReach.ECommerce.API.Controllers
 				return NotFound();
 			}
 
-			category.AddProduct(entity);
+			category.AddProduct(entity.ProductID);
 			repository.Update(categoryId, category);
 			return Ok(category);
 		}
@@ -118,8 +123,31 @@ namespace QuickReach.ECommerce.API.Controllers
 				return NotFound();
 			}
 			category.RemoveProduct(productId);
-			repository.Update(id, category);
+			this.repository.Update(id, category);
 			return Ok();
+		}
+
+		[HttpGet("{id}/products")]
+		public IActionResult GetProductByCategory(int id)
+		{
+			var connectionString = "Server=.;Database=QuickReachDb;Integrated Security=true;";
+			var connection = new SqlConnection(connectionString);
+			var query =
+				@"SELECT pc.ProductID,
+							pc.CategoryID,
+							p.Name,
+							p.Description,
+							p.Price,
+							p.ImageUrl FROM
+							Product p INNER JOIN
+							ProductCategory pc ON p.ID = pc.ProductID
+							WHERE pc.CategoryID = @categoryId";
+			var categories = connection
+				.Query<SearchItemViewModel>(
+				query, new { categoryId = id })
+				.ToList();
+
+			return Ok(categories);
 		}
 	}
 }

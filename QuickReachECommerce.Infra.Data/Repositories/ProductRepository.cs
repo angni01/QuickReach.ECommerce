@@ -42,5 +42,12 @@ namespace QuickReach.ECommerce.Infra.Data.Repositories
 				.ToList();
 			return result;
 		}
+
+		//public IEnumerable<Product> GetByCategory(int categoryId)
+		//{
+		//	var product = this.context.Products.AsNoTracking().Include(p => p.Product(categories).)
+
+		//	return null;
+		//}
 	}
 }
